@@ -1,0 +1,8 @@
+.env
+backup/
+*.tgz
+*.key
+*.pem
+*.crt
+nginx/
+.DS_Store

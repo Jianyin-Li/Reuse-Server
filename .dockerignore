@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+.env.example
+*.md
+*.tgz
+backup
+nginx
+examples
+docker-compose.yml
+Makefile

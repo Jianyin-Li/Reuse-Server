@@ -1,0 +1,39 @@
+name: reuse-server
+
+services:
+  reuse-server:
+    # 默认用本地构建的镜像；部署机在 .env 里设 IMAGE=<registry>/<repo>:<tag>
+    image: ${IMAGE:-reuse-server:trixie}
+    container_name: reuse-server
+    hostname: reuse-server
+
+    environment:
+      TS_HOSTNAME: ${TS_HOSTNAME:-reuse-server}
+      # nginx 要反代 tailnet 内其他机器 → 必须 TUN
+      TS_USERSPACE: ${TS_USERSPACE:-false}
+      # 允许用 MagicDNS 名字做 proxy_pass
+      TS_ACCEPT_DNS: ${TS_ACCEPT_DNS:-true}
+      # 留空 = 已有 state 直接复用；首次才走交互式登录
+      TS_AUTHKEY: ${TS_AUTHKEY:-}
+
+    volumes:
+      - ts-state:/var/lib/tailscale
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    sysctls:
+      net.ipv4.ip_forward: "1"
+
+    restart: unless-stopped
+
+volumes:
+  ts-state:
+    name: reuse-ts-state
