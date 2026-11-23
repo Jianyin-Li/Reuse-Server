@@ -7,6 +7,10 @@ services:
     # 不写 container_name：compose 自动命名为 <项目名>-reuse-server-1，天然不冲突
     hostname: ${TS_HOSTNAME:-reuse-server}
 
+    # 允许容器内通过 host.docker.internal 访问宿主机端口
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     environment:
       TS_HOSTNAME: ${TS_HOSTNAME:-reuse-server}
       TS_USERSPACE: ${TS_USERSPACE:-false}
